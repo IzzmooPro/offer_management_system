@@ -4,6 +4,13 @@ Profesyonel teklif, ürün ve müşteri yönetimi için Windows masaüstü uygul
 
 ---
 
+## Ekran Görüntüleri
+
+![Koyu Tema](screenshots/D1.png)
+![Açık Tema](screenshots/L1.png)
+
+---
+
 ## Gereksinimler
 
 - Windows 10 veya üzeri
