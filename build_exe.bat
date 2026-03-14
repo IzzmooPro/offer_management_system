@@ -1,6 +1,6 @@
 @echo off
 echo ============================================================
-echo   Teklif Yonetim Sistemi - EXE Build Script  (v1)
+echo   Teklif Yonetim Sistemi - EXE Build Script  (v1.0)
 echo ============================================================
 echo.
 

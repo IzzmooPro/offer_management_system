@@ -22,7 +22,7 @@ from PySide6.QtCore import QThread, Signal, Qt
 
 logger = logging.getLogger("updater")
 
-APP_VERSION = "v1"
+APP_VERSION = "v1.0"
 GITHUB_REPO = "IzzmooPro/offer_management_system"
 GITHUB_URL  = f"https://github.com/{GITHUB_REPO}"
 
@@ -124,7 +124,7 @@ class UpdateDialog(QDialog):
         self._downloader   = None
 
         self.setWindowTitle("Güncelleme Mevcut")
-        self.setFixedSize(420, 200)
+        self.setFixedSize(320, 200)
         self.setWindowFlags(
             self.windowFlags() & ~Qt.WindowType.WindowContextHelpButtonHint
         )
@@ -272,7 +272,6 @@ class StartupUpdateChecker(QThread):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setDaemon(True)
 
     def run(self):
         try:
@@ -305,7 +304,7 @@ class StartupUpdateChecker(QThread):
 
         except Exception as e:
             # Başlangıç kontrolü sessizce başarısız olabilir
-            logger.debug("Güncelleme kontrol hatası (sessiz): %s", e)
+            logger.warning("Güncelleme kontrol hatası: %s", e)
 
 
 def start_startup_check(parent=None) -> StartupUpdateChecker:
@@ -320,6 +319,6 @@ def start_startup_check(parent=None) -> StartupUpdateChecker:
         dlg = UpdateDialog(version, dl_url, parent)
         dlg.exec()
 
-    checker.update_found.connect(_show_dialog)
+    checker.update_found.connect(_show_dialog, Qt.ConnectionType.QueuedConnection)
     checker.start()
     return checker

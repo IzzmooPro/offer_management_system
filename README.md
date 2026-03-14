@@ -1,4 +1,4 @@
-# Teklif Yönetim Sistemi  —  Version: v1
+# Teklif Yönetim Sistemi  —  Version: v1.0
 
 Profesyonel teklif, ürün ve müşteri yönetimi için Windows masaüstü uygulaması.
 
