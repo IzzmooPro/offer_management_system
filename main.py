@@ -8,9 +8,33 @@ Başlangıç sırası:
   4. QApplication + MainWindow oluşturulur
   5. Arka planda güncelleme kontrolü başlar (MainWindow içinde)
 """
-import sys, os, traceback, logging
+import sys, os, traceback, logging, ctypes
 from datetime import datetime
 from pathlib import Path
+
+
+# ── Tek örnek kontrolü (Single Instance) ─────────────────────────────────────
+
+def _ensure_single_instance() -> bool:
+    """
+    Windows named mutex ile tek örnek kontrolü.
+    Program zaten çalışıyorsa mevcut pencereyi öne getirir ve False döner.
+    False → çıkış yapılmalı.
+    True  → devam edilebilir.
+    """
+    mutex_name = "TeklifYonetimSistemi_SingleInstance_Mutex"
+    ctypes.windll.kernel32.CreateMutexW(None, False, mutex_name)
+    last_error = ctypes.windll.kernel32.GetLastError()
+
+    if last_error == 183:  # ERROR_ALREADY_EXISTS
+        # Mevcut pencereyi bul ve öne getir
+        hwnd = ctypes.windll.user32.FindWindowW(None, "Teklif Yönetim Sistemi")
+        if hwnd:
+            SW_RESTORE = 9
+            ctypes.windll.user32.ShowWindow(hwnd, SW_RESTORE)
+            ctypes.windll.user32.SetForegroundWindow(hwnd)
+        return False
+    return True
 
 # ── app_paths import (AppData klasörleri oluşturulur + migrasyon) ─────────────
 # Bu import yan etki olarak:
@@ -101,8 +125,12 @@ def _check_data_on_startup(app) -> bool:
 # ── Ana fonksiyon ─────────────────────────────────────────────────────────────
 
 def main():
+    # Program zaten açıksa mevcut pencereyi öne getir, yeni örnek açma
+    if not _ensure_single_instance():
+        sys.exit(0)
+
     logger.info("=" * 50)
-    logger.info("Teklif Yönetim Sistemi başlatılıyor...  (Version: v1)")
+    logger.info("Teklif Yönetim Sistemi başlatılıyor...  (Version: v1.0)")
     logger.info("Python: %s", sys.version)
     logger.info("Veri klasörü: %s", DATA_DIR)
     logger.info("Yedek klasörü: %s", BACKUP_DIR)
